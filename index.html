@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F4F0">
+<meta name="description" content="Daybreak — air quality, UV, temperature and pollen for your city, so you're ready to start your day.">
+<title>Daybreak</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Daybreak">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="phone" id="app" aria-live="polite">
+
+  <!-- Header -->
+  <header class="header">
+    <button class="city-row" id="cityButton" type="button" aria-label="Change city">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.686 7-11a7 7 0 1 0-14 0c0 5.314 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>
+      <span id="cityName">Finding your city…</span>
+    </button>
+    <h1 class="greeting" id="greeting">Good morning</h1>
+    <p class="dateline" id="dateline"></p>
+  </header>
+
+  <!-- Location permission prompt (shown until resolved) -->
+  <section class="permission-card" id="permissionCard" hidden>
+    <p>Daybreak needs your location to show local conditions.</p>
+    <button type="button" id="allowLocationBtn" class="btn-primary">Allow location</button>
+    <button type="button" id="manualCityBtn" class="btn-link">Enter a city instead</button>
+  </section>
+
+  <!-- Manual city search -->
+  <section class="search-card" id="searchCard" hidden>
+    <label for="citySearchInput" class="sr-only">Search for a city</label>
+    <input type="text" id="citySearchInput" placeholder="Search for a city…" autocomplete="off">
+    <ul id="citySearchResults" class="search-results"></ul>
+    <button type="button" id="closeSearchBtn" class="btn-link">Cancel</button>
+  </section>
+
+  <!-- Content -->
+  <div class="content" id="content" hidden>
+
+    <section class="hero" id="hero">
+      <div class="hero-main">
+        <div class="hero-temp" id="temp">—°</div>
+        <div class="hero-condition" id="condition">—</div>
+        <div class="hero-hilo" id="hilo">H:—°&nbsp;&nbsp;L:—°</div>
+      </div>
+      <div class="hero-icon" id="weatherIcon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="3.1"/><path d="M9 3v1.3M9 13.7V15M3 9h1.3M12.7 9H14M4.9 4.9l0.95 0.95M12.15 4.9l-0.95 0.95"/><path d="M9.5 15h7a3.5 3.5 0 0 0 0.4-6.98A5 5 0 0 0 8 9.6"/></svg>
+      </div>
+    </section>
+
+    <h2 class="section-title">Today's outdoor conditions</h2>
+
+    <button type="button" class="mcard" id="cardAir" aria-expanded="false">
+      <div class="mcard-row">
+        <div class="mcard-icon" id="airIconWrap">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h11a2.5 2.5 0 1 0 -2.2 -3.7"/><path d="M3 12h15a2.5 2.5 0 1 1 -2.2 3.7"/><path d="M3 16h8"/></svg>
+        </div>
+        <div class="mcard-text">
+          <div class="mcard-title">Air Quality</div>
+          <div class="mcard-sub" id="airSub">AQI —</div>
+        </div>
+        <div class="mcard-badge" id="airBadge">—</div>
+        <div class="mcard-chevron" id="airChevron">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="mcard-detail" id="airDetail"></div>
+    </button>
+
+    <button type="button" class="mcard" id="cardUv" aria-expanded="false">
+      <div class="mcard-row">
+        <div class="mcard-icon" id="uvIconWrap">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.8"/><path d="M12 2.5v2.3M12 19.2v2.3M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.3M19.2 12h2.3M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+        </div>
+        <div class="mcard-text">
+          <div class="mcard-title">UV Index</div>
+          <div class="mcard-sub" id="uvSub">Index —</div>
+        </div>
+        <div class="mcard-badge" id="uvBadge">—</div>
+        <div class="mcard-chevron" id="uvChevron">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="mcard-detail" id="uvDetail"></div>
+    </button>
+
+    <button type="button" class="mcard" id="cardPollen" aria-expanded="false">
+      <div class="mcard-row">
+        <div class="mcard-icon" id="pollenIconWrap">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 10c0-2.5-1.5-4-3-4.5M12 10c0-2.5 1.5-4 3-4.5M12 14c0 2.5-1.5 4-3 4.5M12 14c0 2.5 1.5 4 3 4.5M10 12c-2.5 0-4-1.5-4.5-3M10 12c-2.5 0-4 1.5-4.5 3M14 12c2.5 0 4-1.5 4.5-3M14 12c2.5 0 4 1.5 4.5 3"/></svg>
+        </div>
+        <div class="mcard-text">
+          <div class="mcard-title">Pollen</div>
+          <div class="mcard-sub" id="pollenSub">Level —</div>
+        </div>
+        <div class="mcard-badge" id="pollenBadge">—</div>
+        <div class="mcard-chevron" id="pollenChevron">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="mcard-detail" id="pollenDetail"></div>
+    </button>
+
+    <section class="recommendation" id="recommendation">
+      <div class="recommendation-icon" id="recIcon"></div>
+      <p id="recText">—</p>
+    </section>
+
+    <p class="stale-note" id="staleNote" hidden>Showing your last update — pull down or reopen to refresh.</p>
+
+  </div>
+
+  <!-- Loading state -->
+  <div class="loading" id="loading" hidden>
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Getting today's conditions…</p>
+  </div>
+
+  <!-- Error state -->
+  <div class="error-state" id="errorState" hidden>
+    <p id="errorText">Something went wrong.</p>
+    <button type="button" id="retryBtn" class="btn-primary">Try again</button>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <button type="button" class="navbtn active" id="tabHome" aria-label="Home">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>
+      <span>Home</span>
+    </button>
+    <button type="button" class="navbtn" id="tabTrends" aria-label="Trends">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+      <span>Trends</span>
+    </button>
+    <button type="button" class="navbtn" id="tabSettings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.5-2-3.4-2.4.7a7.8 7.8 0 0 0-1.7-1L14.8 3h-4l-.5 2.5a7.8 7.8 0 0 0-1.7 1l-2.4-.8-2 3.4L6 11a7.6 7.6 0 0 0 0 2l-2 1.6 2 3.4 2.4-.7c.5.4 1.1.8 1.7 1l.5 2.5h4l.5-2.5c.6-.2 1.2-.6 1.7-1l2.4.7 2-3.4-2-1.6Z"/></svg>
+      <span>Settings</span>
+    </button>
+  </nav>
+
+  <div class="home-indicator" aria-hidden="true"></div>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

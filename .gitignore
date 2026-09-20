@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Vercel
+.vercel
+
+# Dependencies (none currently, but just in case)
+node_modules/
+
+# Logs
+*.log
